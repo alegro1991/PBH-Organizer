@@ -1,25 +1,40 @@
-import java.util.List;
+import java.time.LocalDate;
 
 import model.Manipulation;
-import model.Record;
+import view.Interaction;
 
 public class OrganizerTest {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		String name;
 		Manipulation manipulation = new Manipulation();
-		manipulation.insertRecord("Test 1, 2", "Test zawartoœci 1, 2");
-		manipulation.insertRecord("Test 3, 4", "Test zawartoœci 3, 4");
-
-		List<Record> records = manipulation.selectRecord();
-
-		System.out.println("The list of records: ");
-		for(Record r: records){
-			System.out.println("ID: " + r.getID() + "; Title: " + r.getTitle());
-			System.out.println("Content: " + r.getContent() + "\n");
+		Interaction inter = new Interaction();
+		int choice = inter.workflow();
+		while(choice >= 1 && choice <= 4){
+			switch(choice){
+				case 1:
+					name = inter.nameUser("What's your name?");
+					manipulation.createUser(name);
+					break;
+				case 2:
+					manipulation.showUsers();
+					break;
+				case 3:
+					name = inter.nameUser("Who do you want to remove?");
+					manipulation.dropUser(name);
+					break;
+				case 4:
+					name = inter.nameUser("Which user?");
+					LocalDate date = inter.question();
+					String title = inter.nameUser("What's the title");
+					String content = inter.createContent("What's the content?");
+					manipulation.insertRecord(title, content, date, name);
+					manipulation.showRecords(name);
+					break;
+				default:
+					break;
+			}
 		}
-		manipulation.dropRecord();
-		manipulation.closeConnection();
 	}
-
 }
