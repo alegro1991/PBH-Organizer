@@ -36,7 +36,6 @@ public class Manipulation {
 
 	public void showUsers(){
 		String selectUsers = "SELECT * FROM sqlite_master WHERE type = 'table'";
-		Connection connection = DB_Connection.getConnection();
 		try {
 			PreparedStatement prepStatement = connection.prepareStatement(selectUsers);
 			ResultSet rs = prepStatement.executeQuery();
@@ -73,7 +72,8 @@ public class Manipulation {
 
 	public boolean insertRecord(String title, String content, LocalDate ldate, String name){
 		try {
-			PreparedStatement prepStatement = DB_Connection.getConnection().prepareStatement("INSERT INTO " + name + " VALUES (NULL, ?, ?, ?, ?)");
+			System.out.println(connection);
+			PreparedStatement prepStatement = connection.prepareStatement("INSERT INTO " + name + " VALUES (NULL, ?, ?, ?, ?)");
 			prepStatement.setString(1, title);
 			prepStatement.setString(2, content);
 			Instant insertOccured = Instant.now();
@@ -88,6 +88,18 @@ public class Manipulation {
 			return false;
 		}
 		return true;
+	}
+
+	public void deleteRecord(String name, int id){
+		String delete = "DELETE FROM " + name + " WHERE id = ?";
+		try {
+			PreparedStatement prepStatement = connection.prepareStatement(delete);
+			prepStatement.setInt(1, id);
+			prepStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public List<Record> selectRecord(String name){
@@ -124,9 +136,6 @@ public class Manipulation {
 			System.out.println("Date and time: " + r.getDateTime());
 			System.out.println("Planned date: " + r.getDate());
 		}
-
-
-		DB_Connection.closeConnection();
 	}
 
 }
