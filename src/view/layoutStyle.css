@@ -1,0 +1,8 @@
+.root {
+	-fx-background-color: rgb(150, 158, 250);
+	-fx-base: rgb(0, 156, 256);
+}
+.root .alert{
+	-fx-background-color: rgb(150, 158, 250);
+	-fx-base: rgb(0, 156, 256);
+}

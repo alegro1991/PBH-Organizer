@@ -3,49 +3,69 @@ package model;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Record {
 
-	private int id;
-	private String title;
-	private String content;
-	private Instant dateTime;
-	private LocalDate date;
+	private final IntegerProperty id;
+	private final StringProperty title;
+	private final StringProperty content;
+	private final ObjectProperty<Instant> added;
+	private final ObjectProperty<LocalDate> date;
 
-	public int getID(){
+	public Record(int id, String title, String content, Instant added, LocalDate date){
+		this.id = new SimpleIntegerProperty(id);
+		this.title = new SimpleStringProperty(title);
+		this.content = new SimpleStringProperty(content);
+		this.added = new SimpleObjectProperty<Instant>(added);
+		this.date = new SimpleObjectProperty<LocalDate>(date);
+	}
+
+	public int getId(){
+		return id.get();
+	}
+	public void setId(int id){
+		this.id.set(id);
+	}
+	public IntegerProperty idProperty(){
 		return id;
 	}
-	public void setID(int id){
-		this.id = id;
-	}
 	public String getTitle(){
-		return title;
+		return title.get();
 	}
 	public void setTitle(String title){
-		this.title = title;
+		this.title.set(title);
+	}
+	public StringProperty titleProperty(){
+		return title;
 	}
 	public String getContent(){
-		return content;
+		return content.get();
 	}
 	public void setContent(String content){
-		this.content = content;
+		this.content.set(content);
 	}
-	public Instant getDateTime(){
-		return dateTime;
+	public StringProperty contentProperty(){
+		return content;
+	}
+	public Instant getAdded(){
+		return added.get();
+	}
+	public ObjectProperty<Instant> addedProperty(){
+		return added;
 	}
 	public void setDate(LocalDate date){
-		this.date = date;
+		this.date.set(date);
 	}
 	public LocalDate getDate(){
-		return date;
+		return date.get();
 	}
-
-
-	public Record(){};
-	public Record(int id, String title, String content, Instant dateTime, LocalDate date){
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.dateTime = dateTime;
-		this.date = date;
+	public ObjectProperty<LocalDate> dateProperty(){
+		return date;
 	}
 }

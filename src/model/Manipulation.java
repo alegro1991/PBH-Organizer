@@ -11,6 +11,10 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.LinkedList;
 
 public class Manipulation {
@@ -34,19 +38,24 @@ public class Manipulation {
 		User.createTable(userName);
 	}
 
-	public void showUsers(){
+	public ObservableList<String> showUsers(){
+		ObservableList<String> usersList = FXCollections.observableArrayList();
 		String selectUsers = "SELECT * FROM sqlite_master WHERE type = 'table'";
 		try {
 			PreparedStatement prepStatement = connection.prepareStatement(selectUsers);
 			ResultSet rs = prepStatement.executeQuery();
 			while(rs.next()){
-				System.out.println(rs.getString(2));
+				if(!(rs.getString(2).equals("sqlite_sequence"))){
+					System.out.println(rs.getString(2));
+					usersList.add(rs.getString(2));
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Can't select users");
 			e.printStackTrace();
 		}
+		return usersList;
 	}
 
 	public void dropUser(String userName){
@@ -68,8 +77,6 @@ public class Manipulation {
 		}
 	}
 
-
-
 	public boolean insertRecord(String title, String content, LocalDate ldate, String name){
 		try {
 			System.out.println(connection);
@@ -90,6 +97,23 @@ public class Manipulation {
 		return true;
 	}
 
+	public void editRecord(String title, String content, LocalDate ldate, String name, int id){
+		try {
+			PreparedStatement prepStatement = connection.prepareStatement("UPDATE " + name + " SET title = ?, content = ?, destDate = ? "
+					+ "WHERE id = ?");
+			prepStatement.setString(1, title);
+			prepStatement.setString(2, content);
+			Date date = Date.valueOf(ldate);
+			prepStatement.setDate(3, date);
+			prepStatement.setInt(4, id);
+			prepStatement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Can't make the update statement");
+			e.printStackTrace();
+		}
+	}
+
 	public void deleteRecord(String name, int id){
 		String delete = "DELETE FROM " + name + " WHERE id = ?";
 		try {
@@ -102,8 +126,8 @@ public class Manipulation {
 		}
 	}
 
-	public List<Record> selectRecord(String name){
-		List<Record> records = new LinkedList<Record>();
+	public ObservableList<Record> selectRecord(String name){
+		ObservableList<Record> records = FXCollections.observableArrayList();
 		try {
 			ResultSet result = statement.executeQuery("SELECT * FROM " + name);
 			int id;
@@ -128,12 +152,12 @@ public class Manipulation {
 	}
 
 	public void showRecords(String name){
-		List<Record> records = selectRecord(name);
+		ObservableList<Record> records = selectRecord(name);
 		System.out.println("The list of records: ");
 		for(Record r: records){
-			System.out.println("ID: " + r.getID() + "; Title: " + r.getTitle());
+			System.out.println("ID: " + r.getId() + "; Title: " + r.getTitle());
 			System.out.println("Content: " + r.getContent() + "\n");
-			System.out.println("Date and time: " + r.getDateTime());
+			System.out.println("Date and time: " + r.getAdded());
 			System.out.println("Planned date: " + r.getDate());
 		}
 	}
